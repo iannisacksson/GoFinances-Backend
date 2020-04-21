@@ -9,7 +9,26 @@ import CreateTransactionService from '../services/CreateTransactionService';
 
 const transactionsRouter = Router();
 
-transactionsRouter.get('/', async (request, response) => {});
+transactionsRouter.get('/', async (request, response) => {
+  const transactionsRepository = getCustomRepository(TransactionsRepository);
+
+  const balance = await transactionsRepository.getBalance();
+
+  const transactions = await transactionsRepository
+    .createQueryBuilder('transactions')
+    .leftJoinAndSelect('transactions.category', 'category')
+    .select([
+      'transactions.id',
+      'transactions.title',
+      'transactions.value',
+      'transactions.type',
+      'category.id',
+      'category.title',
+    ])
+    .getMany();
+
+  return response.json({ transactions, balance });
+});
 
 transactionsRouter.post('/', async (request, response) => {
   const { title, value, type, category } = request.body;
