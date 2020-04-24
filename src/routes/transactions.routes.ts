@@ -19,18 +19,9 @@ transactionsRouter.get('/', async (request, response) => {
 
   const balance = await transactionsRepository.getBalance();
 
-  const transactions = await transactionsRepository
-    .createQueryBuilder('transactions')
-    .leftJoinAndSelect('transactions.category', 'category')
-    .select([
-      'transactions.id',
-      'transactions.title',
-      'transactions.value',
-      'transactions.type',
-      'category.id',
-      'category.title',
-    ])
-    .getMany();
+  const transactions = await transactionsRepository.find({
+    relations: ['category'],
+  });
 
   return response.json({ transactions, balance });
 });

@@ -19,10 +19,9 @@ class CreateTransactionService {
     type,
     category,
   }: Request): Promise<Transaction> {
-    let newCategory;
     const categoryRepository = getRepository(Category);
 
-    newCategory = await categoryRepository.findOne({
+    let newCategory = await categoryRepository.findOne({
       where: { title: category },
     });
 
